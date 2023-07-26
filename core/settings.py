@@ -26,11 +26,9 @@ SECRET_KEY = 'django-insecure-o-rx^4ktu@a9o&a9_9k5)6g-kvg+whad#^h9@0_$694^5#+cjq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*', 'mandare-app-060b09f26c4d.herokuapp.com',
-                 'https://mandare-app-060b09f26c4d.herokuapp.com']
+ALLOWED_HOSTS = ['*', '0.0.0.0']
 
-CSRF_TRUSTED_ORIGINS = ['mandare-app-060b09f26c4d.herokuapp.com',
-                        'https://mandare-app-060b09f26c4d.herokuapp.com']
+CSRF_TRUSTED_ORIGINS = ['0.0.0.0']
 # Application definition
 
 INSTALLED_APPS = [
