@@ -1,0 +1,205 @@
+{% load static %}
+<!doctype html>
+<html> 
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Somare - Programa</title>
+  </head>
+  <body class="bg-indigo-950">
+    <section>
+      <div class="flex flex-col items-center mt-5 sm:mt-36 px-6 mx-auto">
+
+        <div class="flex justify-between items-center w-full sm:p-0 sm:max-w-md mb-5">
+          <div >
+            <a href="{% url 'application:paciente' id_paciente %}" class="flex hover:underline text-white cursor-pointer">
+              <svg  class="inline w-5 h-5 mb-1.5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+              </svg>
+              Voltar
+            </a>
+          </div>
+          <div>
+            <a href="{% url 'application:sair' %}" class="flex hover:underline text-white cursor-pointer">
+              <svg class="inline w-5 h-5 mb-1.5 mr-1 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+              </svg>
+              Sair
+            </a>
+          </div>
+        </div>
+
+        <div class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md p-8 ">
+          <div class="space-y-">    
+            <div class="flex items-center justify-center mb-6 text-lg sm:text-2xl font-semibold text-gray-900">
+              <img class="w-10 h-10 mr-2 rounded-full" src="{% static 'images/antigo.png' %}" alt="logo"/>
+              Programa
+            </div>
+
+            {% for message in messages %}
+                {% if message.tags == 'error' %}
+                  <div id="errorPopUp" class="bg-red-400 p-3 rounded-lg text-center">
+                    <p id="errorPopUpText">{{ message }}</p>
+                  </div>
+                {% else %}
+                    <div id="errorPopUp" class="bg-green-400 p-3 rounded-lg text-center">
+                      <p id="errorPopUpText">{{ message }}</p>
+                    </div>
+                {% endif%}
+            {% endfor %}
+
+            <div class="w-full h-8 mt-3">
+              <span class="block mb-2 font-medium text-lg text-gray-900 text-center">{{ programa_paciente.programa.nome }}</span>
+            </div>
+
+            <form class="space-y-4" id="form-select" method="post" action="" >
+              {% csrf_token %}
+              <div>
+                <label for="SelectSessao" class="block mb-2 text-sm font-medium text-gray-900 ">Sessão</label>
+                <select id="SelectSessao" name="SelectSessao" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5">
+                  <option selected value="-1">Selecionar sessão</option>
+                  {% for sessao in sessoes %}
+                    {% if busca_sessao %}
+                      {% if busca_sessao.id == sessao.id %}
+                        <option selected value="{{sessao.id}}">{{sessao.nome}}</option>
+                      {% else %}
+                        <option value="{{sessao.id}}">{{sessao.nome}}</option>
+                      {% endif %}
+                    {% else %}                    
+                      <option value="{{sessao.id}}">{{sessao.nome}}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                <span id="mensagem-erro" class="hidden mb-2 text-sm text-red-900">Selecione uma sessão.</span>
+              </div>
+
+              <div class="block w-full h-[2px] border-t-0 bg-slate-200 opacity-100 dark:opacity-100"></div>
+            </form>
+
+            
+            <form class="space-y-4" id="form-choices" method="post" action="{% url 'application:paciente-programa-resumo' %}" >
+              {% csrf_token %}
+              <input type="hidden" name="sessao_id" value="{{busca_sessao.id}}">
+              <input type="hidden" name="id_paciente" value="{{id_paciente}}">
+              <input type="hidden" name="programa_paciente" value="{{programa_paciente.id}}">
+
+              {% if tentativas %}  
+              
+                {% for tentativa in tentativas %}
+                <div>
+                  <span>{{tentativa.nome}}</span>
+                  <div class="flex items-center justify-between">
+                    <div class="">
+                      <div class=" text-md">
+                        <label for="1trySimcheckbox" class="text-gray-500 ">Sim</label>
+                      </div>
+                      <div class="flex items-center h-5">
+                        {% if tentativa.situacao == 'Sim' %}
+                          <input id="tentativa_{{tentativa.id}}_sim" name="tentativa_{{tentativa.id}}_sim" type="checkbox" checked onchange="desmarcarPar(this.id)" class="w-7 h-7 mt-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"/>
+                        {% else %}
+                          <input id="tentativa_{{tentativa.id}}_sim" name="tentativa_{{tentativa.id}}_sim" type="checkbox"  onchange="desmarcarPar(this.id)" class="w-7 h-7 mt-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"/>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <div class="">
+                      <div class=" text-md">
+                        <label for="1tryNaoCheckbox" class="text-gray-500 ">Não</label>
+                      </div>
+                      <div class="flex items-center h-5">
+                        {% if tentativa.situacao == 'Não' %}
+                          <input id="tentativa_{{tentativa.id}}_nao" name="tentativa_{{tentativa.id}}_nao" type="checkbox" checked onchange="desmarcarPar(this.id)" class="w-7 h-7 mt-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"/>
+                        {% else %}
+                        <input id="tentativa_{{tentativa.id}}_nao" name="tentativa_{{tentativa.id}}_nao" type="checkbox"  onchange="desmarcarPar(this.id)" class="w-7 h-7 mt-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"/>
+                        {% endif %}
+                      
+                      </div>
+                    </div>
+
+                    <div class="">
+                      <div class=" text-md">
+                        <label for="1trySuporteCheckbox" class="text-gray-500 ">Suporte</label>
+                      </div>
+                      <div class="flex items-center h-5">
+                        {% if tentativa.situacao == 'Suporte' %}
+                          <input id="tentativa_{{tentativa.id}}_suporte" name="tentativa_{{tentativa.id}}_suporte" type="checkbox"  checked onchange="desmarcarPar(this.id)" class="w-7 h-7 mt-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"/>
+                        {% else %}
+                          <input id="tentativa_{{tentativa.id}}_suporte" name="tentativa_{{tentativa.id}}_suporte" type="checkbox"  onchange="desmarcarPar(this.id)" class="w-7 h-7 mt-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"/>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              {% endif %}
+
+              <div class="block w-full h-[2px] border-t-0 bg-slate-200 opacity-100 dark:opacity-100"></div>
+              <button href="resultado_programa.html" class="block w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center h-12">Registrar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      // Obtém a referência para o elemento <select>
+      var selectElement = document.getElementById('SelectSessao');
+
+      // Adiciona um event listener para o evento 'change'
+      selectElement.addEventListener('change', function() {
+        // Obtém a referência para o formulário
+      var formElement = document.getElementById("form-select");
+
+        // Realiza o submit do formulário
+      formElement.submit();
+        
+      });
+
+      function desmarcarPar(nomeCheckbox) {
+        var checkbox1, checkbox2, checkbox3;
+        var nomeBase = nomeCheckbox.split("_")[0] + "_" + nomeCheckbox.split("_")[1]; 
+
+         clicked = document.getElementById(nomeCheckbox);
+
+        if (nomeCheckbox.includes(nomeBase)) {
+          checkbox1 = document.getElementById(nomeBase + "_" + "sim");
+          checkbox2 = document.getElementById(nomeBase + "_" + "nao");
+          checkbox3 = document.getElementById(nomeBase + "_" + "suporte");
+        }
+    
+        // Verifica se o checkbox atual está marcado
+        if (clicked.name == checkbox1.name) {
+          checkbox2.checked = false;
+          checkbox3.checked = false;    
+        }
+        
+        if (clicked.name == checkbox2.name) {
+          checkbox1.checked = false;
+          checkbox3.checked = false; 
+        }
+        
+        if (clicked.name == checkbox3.name) {
+          checkbox1.checked = false;
+          checkbox2.checked = false; 
+        }
+      }
+
+      document.getElementById("form-choices").addEventListener("submit", function(event) {
+        // Impede o envio padrão do formulário
+        event.preventDefault();
+      
+        // Realize suas verificações aqui
+        var choice = document.getElementById("SelectSessao").value;
+        if (choice == "-1") {
+          // Se as verificações passarem, envie o formulário manualmente
+          document.getElementById("mensagem-erro").style.display = "block";
+        } else {
+          // Caso contrário, faça alguma ação (ex: exiba uma mensagem de erro)
+          
+          this.submit();
+        }
+      });
+      
+    </script>
+  </body>
+</html>

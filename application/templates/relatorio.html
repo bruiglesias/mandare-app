@@ -1,0 +1,134 @@
+{% load static %}
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Somare - Relatório</title>
+</head>
+
+<body class="bg-indigo-950">
+  <section>
+    <div class="flex flex-col items-center mt-5 sm:mt-40 px-6 mx-auto">
+
+      <div class="flex justify-between items-center w-full sm:p-0 sm:max-w-md mb-5">
+        <div>
+          <a href="{% url 'application:paciente-programa-historico' paciente_id programa_id %}" class="flex hover:underline text-white cursor-pointer">
+            <svg class="inline w-5 h-5 mb-1.5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+            </svg>
+            Voltar
+          </a>
+        </div>
+        <div>
+          <a href="{% url 'application:sair' %}" class="flex hover:underline text-white cursor-pointer">
+            <svg class="inline w-5 h-5 mb-1.5 mr-1 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+            </svg>
+            Sair
+          </a>
+        </div>
+      </div>
+
+      <div class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 ">
+        <div class="space-y-4 md:space-y-6 p-8">   
+          <div class="w-full h-64">
+            <canvas id="canva" class="flex w-full h-auto mx-auto text-black"></canvas>
+          </div>
+
+
+          <button id="download" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center h-12">Download PNG</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+  <script>
+    // Captura o clique no botão
+    document.getElementById('download').addEventListener('click', function() {
+      // Obtém o elemento canvas
+      var canvas = document.getElementById('canva');
+    
+      // Usa a biblioteca html2canvas para converter o canvas em uma imagem
+      html2canvas(canvas).then(function(canvasImg) {
+        // Cria um elemento de link para baixar a imagem
+        var link = document.createElement('a');
+        link.href = canvasImg.toDataURL('image/png'); // Define a imagem como URL do link
+        link.download = 'grafico.png'; // Define o nome do arquivo para download
+    
+        // Dispara o clique no link para iniciar o download
+        link.click();
+      });
+    });
+  </script>
+</body>
+
+<script>
+  new Chart(document.getElementById("canva"), {
+    type: 'line',
+    data: {
+      labels: {{ sessoes_nome|safe }},
+      datasets: [
+        {
+          data: {{ sim|safe }},
+          label: "Sim",
+          borderColor: "green",
+          fill: false
+        },
+        {
+          data: {{ nao|safe }},
+          label: "Não",
+          borderColor: "red",
+          fill: false
+        },
+        {
+          data: {{ suporte|safe }},
+          label: "Suporte",
+          borderColor: "blue",
+          fill: false
+        }
+      ]
+    },
+    options: {
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: 10,
+            boxHeight: 2,
+          },
+        },
+        title: {
+          display: true,
+          text: 'Relatório do Paciente',
+          color: 'black',
+          font: {
+            size: 22,
+            weight: 'bold',
+            
+          }
+        },
+        subtitle: {
+          display: true,
+          text: ["{{paciente_nome|safe}}", '{{programa_nome}}',''],
+          color: 'black',
+          font: {
+            size: 18,
+            weight: 'normal',
+          }
+        }
+      },
+
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+</script>
+
+</html>

@@ -1,0 +1,207 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Somare - Cadastro </title>
+</head>
+
+<body class="bg-indigo-950" onload="listarSelects()">
+  <section class="">
+    <div class="flex flex-col items-center mt-5 mb-5 px-6">
+      <div class="flex justify-between items-center w-full sm:p-0 sm:max-w-md mb-5">
+        <div>
+          <a href="{% url 'application:index' %}" class="flex hover:underline text-white cursor-pointer">
+            <svg class="inline w-5 h-5 mb-1.5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+            </svg>
+            Voltar
+          </a>
+        </div>
+      </div>
+      <div class="w-full bg-white rounded-lg shadow sm:max-w-md p-2">
+        <div class="p-6 space-y-4">
+          <div class="flex justify-center mb-6 text-lg sm:text-2xl font-semibold text-gray-900 ">
+            <img class="w-8 h-8 mr-2" src="{% static 'images/antigo.png' %}" alt="logo" />
+            Cadastro
+          </div>
+
+          <div class="w-full text-center">
+            <span class="block mb-2 font-medium">Foto do Perfil</span>
+            <img src="{% static 'images/user-icon.png' %}" id="IconFotoPaciente"
+              class="bg-gray-200 mx-auto rounded-full w-24 h-24 p-0.5" alt="img_paciente" />
+            <span id="FotoPacienteError" class="hidden block mt-1 text-red-500 p-2">Tipo de arquivo não suportado. <br>
+              Por favor, selecione um arquivo JPEG, PNG ou JPG.</span>
+          </div>
+
+          <form method="POST" action="{% url 'application:redirect' %}" class="space-y-4" enctype="multipart/form-data"
+            onsubmit="formatarDados(event)">
+            {% csrf_token %}
+            <input type="hidden" name="profissional" value="{{ request.user.id }}">
+            <div>
+              <label for="{{ form.foto_perfil.id_for_label }}"
+                class="text-center text-white bg-blue-600 hover:bg-blue-700 block font-medium rounded-lg text-sm px-5 py-3 h-12 cursor-pointer">
+                <span>Selecionar Foto</span>
+                <!-- input type="file" accept="image/jpeg, image/png, image/jpg" id="FotoPaciente" name="FotoPaciente" oninput="changePhoto()" class="hidden"/-->
+                {{ form.foto_perfil }}
+              </label>
+            </div>
+            <div>
+              <label for="{{ form.nome.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 ">Nome
+                Profissional</label>
+              <!-- input type="text" id="NomeProfissional" name="NomeProfissional" oninput="formatarNome('NomeProfissional')" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 " placeholder="Nome" required/ -->
+              {{form.nome}}
+              <span class="block mb-2 text-sm text-red-900">{{ form.nome.errors }}</span>
+            </div>
+
+            <div>
+              <label for="{{ form.data_nascimento.id_for_label }}"
+                class="block mb-2 text-sm font-medium text-gray-900 ">Data de Nascimento</label>
+              <!-- input type="text" placeholder="dd/mm/aaaa" maxlength="11" oninput="formatarData('DataNascimento')" id="DataNascimento" name="DataNascimento" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 " required/ -->
+              {{ form.data_nascimento }}
+              <span class="block mb-2 text-sm text-red-900">{{ form.data_nascimento.errors }}</span>
+            </div>
+
+            <div>
+              <label for="{{ form.especialidade.id_for_label }}"
+                class="block mb-2 text-sm font-medium text-gray-900 ">Especialidade</label>
+              <!-- select id="SelectEspecialidade" name="SelectEspecialidade" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5">
+                  <option>Selecione a Especialidade</option>
+                  <option>Psicologia</option>
+                </select -->
+              {{ form.especialidade }}
+              <span class="block mb-2 text-sm text-red-900">{{ form.especialidade.errors }}</span>
+            </div>
+
+            <div>
+              <label for="{{ form.celular.id_for_label }}"
+                class="block mb-2 text-sm font-medium text-gray-900 ">Celular</label>
+              <!-- input type="text" id="celular" name="celular" maxlength="15" oninput="formatarNumeroCelular('celular')" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 " placeholder="(99) 99999-9999" required/-->
+              {{ form.celular }}
+              <span class="block mb-2 text-sm text-red-900">{{ form.celular.errors }}</span>
+            </div>
+
+            <div>
+              <label for="{{ form.pais.id_for_label }}"
+                class="block mb-2 text-sm font-medium text-gray-900 ">Pais</label>
+              <!--select id="SelectPais" name="SelectPais" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" disabled>
+                  <option value="Brasil" selected>Brasil</option>
+                </select -->
+              {{ form.pais }}
+              <span class="block mb-2 text-sm text-red-900">{{ form.pais.errors }}</span>
+            </div>
+
+            <div>
+              <label for="{{ form.estado.id_for_label }}"
+                class="block mb-2 text-sm font-medium text-gray-900 ">Estado</label>
+              <div id="SelectEstadoInputDiv">
+                <select id="id_estado" oninput="listarCidades()" name="estado"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 ">
+                  <option selected value="null">Selecione o Estado</option>
+                </select>
+                <!-- {{ form.estado }} -->
+                <span class="block mb-2 text-sm text-red-900">{{ form.estado.errors }}</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="{{ form.cidade.id_for_label }}"
+                class="block mb-2 text-sm font-medium text-gray-900 ">Cidade</label>
+              <div id="SelectCidadeInputDiv">
+                <select id="id_cidade" name="cidade"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 ">
+                  <option selected value="null">Selecione a Cidade</option>
+                </select>
+                <!--{{ form.cidade }}-->
+                <span class="block mb-2 text-sm text-red-900">{{ form.cidade.errors }}</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="{{ form.email.id_for_label }}"
+                class="block mb-2 text-sm font-medium text-gray-900 ">Email</label>
+              <!-- input type="email" id="email" name="email" oninput="validarEmail('email')" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 " placeholder="email@exemplo.com" required/ -->
+              {{ form.email }}
+              <span class="block mb-2 text-sm text-red-900">{{ form.email.errors }}</span>
+            </div>
+
+            <div>
+              <label for="{{ form.password.id_for_label }}"
+                class="block mb-2 text-sm font-medium text-gray-900">Senha</label>
+              <div class="relative">
+                {{ form.password }}
+                <!-- input id="Senha" name="Senha" type="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" required/ -->
+                <span id="toggle-senha-icon" name="toggle-senha-icon" class="absolute right-4 bottom-2.5"
+                  onclick="visibilidadeSenha('id_password', 'toggle-senha-icon')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </span>
+              </div>
+              <span class="block mb-2 text-sm text-red-900">{{ form.password.errors }}</span>
+            </div>
+
+            <div>
+              <label for="{{ form.password2.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900">Senha
+                novamente</label>
+              <div class="relative">
+                {{ form.password2 }}
+                <!-- input type="password" id="senhaConfirm" name="senhaConfirm" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" required/ -->
+                <span id="toggle-senhaConfirm-icon" name="toggle-senhaConfirm-icon" class="absolute right-4 bottom-2.5"
+                  onclick="visibilidadeSenha('id_password2', 'toggle-senhaConfirm-icon')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </span>
+              </div>
+              <span class="block mb-2 text-sm text-red-900">{{ form.password2.errors }}</span>
+            </div>
+
+            <div class="flex items-start">
+              <!--
+              <div class="flex items-center h-5">
+                <input id="TemosUso" name="TemosUso" aria-describedby="remember" type="checkbox"
+                  class="w-4 h-4 border border-gray-300 rounded bg-gray-50" required />
+              </div>
+              <div class="ml-3 text-sm">
+                <label for="TemosUso" class="text-gray-500 ">Você concorda com os <a href="#"
+                    class="text-blue-600 hover:underline">Termos de Uso</a>?</label>
+              </div>
+              -->
+            </div>
+
+            <button type="submit"
+              class="block w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center h-12">
+              Cadastrar
+            </button>
+          </form>
+
+          <p class="text-center text-sm font-medium">Já tem conta?
+            <a href="{% url 'application:index' %}"
+              class="hover:underline text-blue-600 font-medium inline-flex space-x-1 items-center"><span>Logar </span>
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </span>
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="{% static 'js/scripts.js' %}"></script>
+
+</html>

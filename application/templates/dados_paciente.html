@@ -1,0 +1,100 @@
+{% load static %}
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Somare - Dados do Paciente</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-indigo-950">
+  <section>
+    <div class="flex flex-col items-center mt-5 sm:mt-40 px-6 mx-auto lg:py-0">
+
+      <div class="flex justify-between items-center w-full sm:p-0 sm:max-w-md mb-5">
+        <div>
+          <a href="{% url 'application:principal' %}" class="flex hover:underline text-white cursor-pointer">
+            <svg class="inline w-5 h-5 mb-1.5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+            </svg>
+            Voltar
+          </a>
+        </div>
+        <div>
+          <a href="{% url 'application:sair' %}" class="flex hover:underline text-white cursor-pointer">
+            <svg class="inline w-5 h-5 mb-1.5 mr-1 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+            </svg>
+            Sair
+          </a>
+        </div>
+      </div>
+
+      <div class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md p-6">
+        <div class="space-y-4 md:space-y-6">
+          <div class="flex items-center justify-center mb-6 text-lg sm:text-2xl font-semibold text-gray-900">
+            <img class="w-10 h-10 mr-2 rounded-full" src="{% static 'images/antigo.png' %}" alt="logo" />
+            Dados do Paciente
+          </div>
+
+          <div class="w-full h-8">
+            <span class="block mb-2 font-medium text-xl text-gray-900 text-center">{{ paciente.nome}}</span>
+          </div>
+
+          <div>
+            {% if paciente.foto_perfil %}
+            <img src="{{paciente.foto_perfil.url}}" class="bg-gray-200 mx-auto rounded-full w-24 h-24 p-0.5"
+              alt="img_paciente" />
+            {% else %}
+            <img src="{% static 'images/user-icon.png' %}" class="bg-gray-200 mx-auto rounded-full w-24 h-24 p-0.5"
+              alt="img_paciente" />
+            {% endif %}
+          </div>
+
+          <form method="POST" action="{% url 'application:paciente-programa-cadastrar' paciente.id %}"
+            class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="paciente" value="{{ paciente.id }}">
+            <div>
+              <label for="id_programa" class="block mb-2 text-sm font-medium text-gray-900">Programas</label>
+              <select name="programa" id="id_programa"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5">
+                <option selected value="-1">Selecionar programa</option>
+                {% if programas %}
+                  {% for programa in programas %}
+                    <option value="{{programa.id}}"><a>{{programa.nome}}</option>
+                  {% endfor %}
+                {% endif %}
+              </select>
+              {% for message in messages %}
+                {% if message.tags == 'error' %}
+                  <span class="block mb-2 text-sm text-red-900">{{ message }}</span>
+                {% endif%}
+              {% endfor %}
+            </div>
+
+            <button type="submit"
+              class="block w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center h-12">Continuar
+              Programa</button>
+          </form>
+
+          <div class="block w-full h-[2px] border-t-0 bg-slate-200 opacity-100 dark:opacity-100"></div>
+
+          <a href="{% url 'application:editar-paciente' paciente.id  %}"
+            class="block w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center h-12">Editar
+            Paciente</a>
+          <a href="{% url 'application:paciente-historico' paciente.id  %}"
+            class="block w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center h-12">Histórico
+            de Programas</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+
+</html>

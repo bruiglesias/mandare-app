@@ -1,0 +1,98 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Somare - Resumo do Programa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-indigo-950">
+    <section>
+      <div class="flex flex-col items-center mt-5 sm:mt-24 px-6 mx-auto">
+
+        <div class="flex justify-between items-center w-full sm:p-0 sm:max-w-md mb-5">
+          <div >
+            <a href="{% url 'application:paciente' id_paciente %}" class="flex hover:underline text-white cursor-pointer">
+              <svg  class="inline w-5 h-5 mb-1.5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+              </svg>
+              Voltar
+            </a>
+          </div>
+          <div>
+            <a href="{% url 'application:sair' %}" class="flex hover:underline text-white cursor-pointer">
+              <svg class="inline w-5 h-5 mb-1.5 mr-1 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+              </svg>
+              Sair
+            </a>
+          </div>
+        </div>
+
+        <div class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md ">
+          <div class="space-y-4 md:space-y-6 p-8">    
+            <div class="flex items-center justify-center mb-6 text-lg sm:text-2xl font-semibold text-gray-900">
+              <img class="w-10 h-10 mr-2 rounded-full" src="{% static 'images/antigo.png' %}" alt="logo"/>
+              Resumo do Programa
+            </div>
+
+            <div class="">
+              <div class="w-full h-8">
+                  <span class="block h-auto mb-2 font-medium text-xl text-gray-900 text-center">{{ programa_nome }}</span>
+              </div>
+              <div class="w-full bg-gray-100 rounded-lg h-auto mt-2">
+                <span class="block mb-2 font-medium text-lg text-gray-900 text-center py-1.5">{{ busca_sessao_nome }}</span>
+              </div>
+            </div>
+
+            <div class="bg-gray-100 rounded-lg p-2 text-center">
+              <div class="w-full h-auto px-4">
+                  <span class="block mb-2 font-medium text-lg text-gray-900">Paciente: {{ paciente_nome }}</span>
+              </div>
+              <div class="w-full h-auto px-4">
+                <span class="block mb-2 font-medium text-lg text-gray-900">Idade: {{ paciente_idade }}</span>
+              </div>
+              <div class="w-full h-auto px-4">
+                <span class="block mb-2 font-medium text-lg text-gray-900">Especialidade: {{ paciente_especialidade }}</span>
+              </div>
+              <div class="w-full h-auto px-4">
+                <span class="block mb-2 font-medium text-lg text-gray-900">Profissional: {{ request.user.nome }}</span>
+              </div>
+            </div>
+
+            <div class="bg-gray-100 rounded-lg p-2 text-center">
+              <div class="w-full h-auto">
+                  <span class="block mb-2 font-medium text-lg text-gray-900 text-center">Respostas:</span>
+              </div>  
+              {% for tentativa in tentativas%}
+                <div class="w-full h-auto">
+                  <span class="block mb-2 font-medium text-lg text-gray-900 text-center">{{tentativa.tentativa_numero}}º Tentativa - {{tentativa.situacao}}</span>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="bg-gray-100 rounded-lg">
+              <div class="w-full h-auto">
+                  <span class="block py-1.5 mb-2 font-medium text-lg text-gray-900 text-center">{{ data_formatada }}</span>
+              </div>
+            </div>
+              <form id="form-select" method="post" action="{% url 'application:paciente-programa-redirect' %}" >
+                {% csrf_token %}
+                <input type="hidden" name="sessao_id" value="{{sessao_id}}">
+                <input type="hidden" name="id_paciente" value="{{id_paciente}}">
+                <input type="hidden" name="programa_paciente" value="{{programa_paciente_id}}">
+                {% for tentativa in tentativas%}
+                    <input type="hidden" name="tentativa_{{tentativa.tentativa_id}}" value="{{tentativa.situacao}}" />
+                {% endfor %}
+                  <button href="dados_paciente.html" class="block w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center h-12">Salvar</button>
+              </form>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+
+    </script>
+  </body>
+</html>
