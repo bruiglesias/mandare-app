@@ -35,19 +35,6 @@ class PacienteForm(forms.ModelForm):
             'autocomplete': "off"
         }))
 
-    especialidade = forms.ChoiceField(
-        required=False,
-        choices=[
-            ("", "Selecione a especialidade"),
-            ("Psicologia", "Psicologia"),
-        ],
-        widget=forms.Select(
-            attrs={
-                'class': "bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"  # noqa
-            }
-        )
-    )
-
     diagnostico = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
@@ -105,16 +92,6 @@ class PacienteForm(forms.ModelForm):
             )
 
         return data_nascimento
-
-    def clean_especialidade(self):
-        especialidade = self.cleaned_data.get('especialidade')
-        if especialidade is None or len(especialidade) == 0:
-            raise forms.ValidationError(
-                'O campo especialidade é obrigarório.',
-                code='required'
-            )
-
-        return especialidade
 
     def clean_diagnostico(self):
         diagnostico = self.cleaned_data.get('diagnostico')

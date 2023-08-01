@@ -65,6 +65,7 @@
             onsubmit="formatarDados(event)">
               {% csrf_token %}
               <input type="hidden" name="profissional" value="{{ request.user.id }}">
+              <input type="hidden" name="especialidade" value="{{ request.user.especialidade }}">
               <div>
                 <label class="text-center text-white bg-blue-600 hover:bg-blue-700 block font-medium rounded-lg text-sm px-5 py-3 h-12 cursor-pointer">
                   <span>Selecionar Foto</span>
@@ -88,12 +89,12 @@
               </div>
 
               <div>
-                <label for="{{ form.especialidade.id_for_label }}" class="block mb-2 text-sm font-medium">Especialidade</label>
                 <!--select id="SelectEspecialidade" name="SelectEspecialidade" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" required>
                   <option>Selecione a Especialidade</option>
                   <option>Psicologia</option>
                 </select-->
-                {{ form.especialidade }}
+                <label for="ProfissionalEspecialidade" class="block mb-2 text-sm font-medium">Especialidade</label>
+                <input type="text" id="ProfissionalEspecialidade" name="ProfissionalEspecialidade" value="{{ request.user.especialidade }}" class="bg-gray-50 border border-gray-300 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 " placeholder="Especialidade" disabled/>
                 <span class="block mb-2 text-sm text-red-900">{{ form.especialidade.errors }}</span>                
               </div>
 

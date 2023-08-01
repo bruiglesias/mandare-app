@@ -150,6 +150,7 @@ def add_program_redirect(request):
 @login_required(login_url='application:index')
 def add_paciente_page(request):
     register_form_data = request.session.get('register_form_data', None)
+
     form = forms.PacienteForm(register_form_data)
     data_atual = date.today().strftime("%d/%m/%Y")
     context = {
@@ -164,7 +165,6 @@ def add_paciente_redirect(request):
 
     if not request.POST:
         raise Http404()
-
     POST = request.POST
     request.session['register_form_data'] = POST
 
